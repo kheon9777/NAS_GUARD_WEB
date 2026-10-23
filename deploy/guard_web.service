@@ -1,0 +1,16 @@
+[Unit]
+Description=guard web console (FastAPI)
+After=network-online.target guard.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/raspi/sv/guard_web
+ExecStart=/home/raspi/sv/guard_web/.venv/bin/python -m app
+# guard.db가 root 소유이고 SIGHUP을 root 프로세스에 보내야 해서 root로 실행
+User=root
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

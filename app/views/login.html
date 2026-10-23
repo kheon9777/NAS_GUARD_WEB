@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="login">
+<h3>guard console</h3>
+<form method="post" action="/login">
+<p>아이디<br><input type="text" name="username" autofocus></p>
+<p>비밀번호<br><input type="password" name="password"></p>
+<p><button>로그인</button></p>
+</form>
+</div>
+{% endblock %}

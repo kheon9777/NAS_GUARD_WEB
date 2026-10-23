@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>설정</h3>
+{% if groups is none %}
+<p class="err">tbl_config_info 테이블이 없음. guard를 한 번 실행하면 생긴다.</p>
+{% else %}
+<form method="post" action="/settings">
+<table>
+{% for title, items in groups %}
+<tr><th colspan="2">{{ title }}</th></tr>
+{% for r in items %}
+<tr>
+<td>{{ r.help or r.name }}{% if r.restart %} <span class="small">(재시작 필요)</span>{% endif %}</td>
+<td><input type="{{ 'number' if r.type|upper == 'INTEGER' else 'text' }}" name="{{ r.name }}" value="{{ r.value }}"></td>
+</tr>
+{% endfor %}
+{% endfor %}
+</table>
+<p><button>저장</button></p>
+</form>
+{% endif %}
+{% endblock %}

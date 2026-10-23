@@ -1,0 +1,33 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# ===== 실행 중 생기는 데이터 =====
+# SQLite DB (guard와 공유. 실제 IP, 계정 해시가 들어 있음)
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# 로그
+*.log
+logs/
+
+# ===== 개인 설정 =====
+.env
+*.local.*
+config.local.*
+
+# ===== 에디터 / OS =====
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# ===== ETC =====
+CLAUDE.md

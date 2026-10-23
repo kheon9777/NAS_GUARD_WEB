@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>차단 기록 (최근 200)</h3>
+<table>
+<tr><th>time</th><th>ip</th><th>reason</th></tr>
+{% for r in rows %}
+<tr><td>{{ r.t }}</td><td>{{ r.ip }}</td><td>{{ r.reason }}</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

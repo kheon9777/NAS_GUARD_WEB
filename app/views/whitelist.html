@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>화이트리스트 (tbl_whitelist)</h3>
+<table>
+<tr><th>id</th><th>ip</th><th>mask</th><th>note</th><th>created</th><th></th></tr>
+{% for r in rows %}
+<tr><td>{{ r.id }}</td><td>{{ r.ip }}</td><td>{{ r.mask or '(단일 IP)' }}</td><td>{{ r.note or '' }}</td><td>{{ r.created_at }}</td>
+<td><form class="inline" method="post" action="/whitelist/delete"><input type="hidden" name="id" value="{{ r.id }}"><button>삭제</button></form></td></tr>
+{% endfor %}
+</table>
+<h4>추가</h4>
+<form method="post" action="/whitelist/add">
+ip <input type="text" name="ip" placeholder="192.168.0.0">
+mask <input type="text" name="mask" placeholder="255.255.255.0 (비우면 단일 IP)">
+note <input type="text" name="note">
+<button>추가</button>
+</form>
+{% endblock %}

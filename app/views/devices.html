@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>장비 (tbl_device)</h3>
+<table>
+<tr><th>mac</th><th>ip</th><th>name</th><th>note</th><th>first seen</th><th>last seen</th><th></th></tr>
+{% for d in devices %}
+<tr>
+<form method="post" action="/devices/name">
+<td>{{ d.mac }}<input type="hidden" name="mac" value="{{ d.mac }}"></td>
+<td>{{ d.ip }}</td>
+<td><input type="text" name="name" value="{{ d.name or '' }}" style="width:10em"></td>
+<td><input type="text" name="note" value="{{ d.note or '' }}" style="width:14em"></td>
+<td>{{ d.first_seen }}</td><td>{{ d.last_seen }}</td>
+<td><button>저장</button></form>
+<form class="inline" method="post" action="/devices/delete"><input type="hidden" name="mac" value="{{ d.mac }}"><button>삭제</button></form></td>
+</tr>
+{% endfor %}
+</table>
+<h3>장비 이벤트 (최근 100)</h3>
+<p class="small">new_device 새 MAC, device_gone 만료 삭제, mac_changed 알던 IP의 MAC이 바뀜, <b>arp_spoof</b> 짧은 시간에 여러 번 바뀜 (알람)</p>
+<table>
+<tr><th>time</th><th>type</th><th>ip</th><th>old mac</th><th>new mac</th></tr>
+{% for e in events %}
+<tr{% if e.type == 'arp_spoof' %} class="alarm"{% endif %}><td>{{ e.t }}</td><td>{{ e.type }}</td><td>{{ e.ip }}</td><td>{{ e.old_mac }}</td><td>{{ e.new_mac }}</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

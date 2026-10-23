@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block body %}
+<h3>계정</h3>
+<h4>비밀번호 변경</h4>
+<form method="post" action="/account/password">
+<p>현재<br><input type="password" name="current"></p>
+<p>새 비밀번호<br><input type="password" name="new"></p>
+<p>확인<br><input type="password" name="confirm"></p>
+<p><button>변경</button></p>
+</form>
+{% endblock %}
