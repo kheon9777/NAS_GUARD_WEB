@@ -1,6 +1,6 @@
 # NAS_GUARD_WEB
 
-`guard`(../NAS_GUARD) 데몬의 웹 콘솔. guard와 같은 `guard.db`를 읽고 쓰며, 설정과 화이트리스트를 바꾸면 guard에 SIGHUP을 보내 바로 반영함. (FastAPI + Jinja2)
+`guard`(../NAS_GUARD) 데몬의 웹 콘솔. guard와 같은 `guard.db`를 읽고 쓰며, 설정과 화이트리스트를 바꾸면 `sudo systemctl reload guard`(ExecReload가 SIGHUP)로 바로 반영함. (FastAPI + Jinja2)
 
 ## 구조
 
@@ -11,11 +11,12 @@ app/
   config.py       config.ini 읽기 (호스트, 포트, DB 경로)
   db.py           SQLite 연결. 웹 전용 테이블(tbl_user, tbl_web_config) 생성
   auth.py         계정과 세션. PBKDF2 비밀번호, HMAC 서명 쿠키
-  guardctl.py     guard 프로세스 확인과 SIGHUP 전송
+  guardctl.py     guard 프로세스 확인과 리로드 (sudo systemctl reload guard)
   main.py         라우트와 화면 로직
   views/          Jinja2 템플릿 (base, login, settings, whitelist, blocks, devices, account)
 deploy/
-  guard_web.service   systemd 유닛
+  guard_web.service   systemd 유닛 (User=raspi)
+  guard_web.sudoers   raspi에게 systemctl reload guard 만 허용. /etc/sudoers.d/guard_web
   config.ini          서비스용 설정 (DB 경로가 sv/guard/guard.db)
 config.ini        개발용 설정
 run.sh            개발 실행 (.venv/bin/python -m app)
@@ -42,4 +43,6 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   # 처음 �
 서비스 배포는 `./deploy.sh` (app 복사, pip install, `guard_web` 재시작). 처음 한 번은 `./deploy.sh install`. 운영 경로는 `/home/raspi/sv/guard_web`
 
 ## 권한
-시작할 때 root가 아니면 안내를 찍고 바로 종료. 서비스는 `User=root`, 개발은 `sudo ./run.sh`
+웹은 일반 계정 `raspi`로 돈다 (서비스 `User=raspi`, 개발은 그냥 `./run.sh`).
+- `guard.db` 쓰기: DB 파일을 raspi 소유로 둔다 (`deploy.sh`가 chown). guard(root)가 raspi 소유 DB를 열면 `-wal`, `-shm`도 raspi 소유로 만들어지므로 한 번이면 된다.
+- guard 리로드: `/etc/sudoers.d/guard_web`(`deploy/guard_web.sudoers`)이 raspi에게 `/usr/bin/systemctl reload guard` 하나만 비밀번호 없이 허용한다. `guardctl.reload()`가 이 명령을 부른다.

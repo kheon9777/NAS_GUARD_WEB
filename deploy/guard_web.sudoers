@@ -1,0 +1,2 @@
+# guard 웹 콘솔(raspi)이 설정 저장 뒤 guard를 리로드할 때 쓰는 명령 하나만 허용. /etc/sudoers.d/guard_web
+raspi ALL=(root) NOPASSWD: /usr/bin/systemctl reload guard

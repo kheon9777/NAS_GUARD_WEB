@@ -7,8 +7,9 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=/home/raspi/sv/guard_web
 ExecStart=/home/raspi/sv/guard_web/.venv/bin/python -m app
-# guard.db가 root 소유이고 SIGHUP을 root 프로세스에 보내야 해서 root로 실행
-User=root
+# 일반 계정으로 실행. guard.db는 raspi 소유(deploy.sh가 chown), guard 리로드는 sudoers(deploy/guard_web.sudoers)로 허용한
+# systemctl reload guard 만 sudo로 부른다
+User=raspi
 Restart=on-failure
 RestartSec=3
 

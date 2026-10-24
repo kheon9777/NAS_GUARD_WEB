@@ -1,7 +1,8 @@
-"""guard 프로세스 상태 확인과 SIGHUP(리로드) 전송. 웹은 root로 돌므로(__main__에서 확인) 시그널을 바로 보낸다."""
-import os
-import signal
+"""guard 프로세스 상태 확인과 리로드. 웹은 일반 계정으로 돌므로 시그널을 직접 보내지 않고
+sudo systemctl reload guard 를 쓴다 (guard.service의 ExecReload가 SIGHUP. deploy/guard_web.sudoers 참고)."""
 import subprocess
+
+RELOAD_CMD = ["sudo", "-n", "/usr/bin/systemctl", "reload", "guard"]  # sudoers에 적힌 명령과 같아야 함
 
 
 def pid() -> int | None:
@@ -18,7 +19,9 @@ def reload() -> tuple[bool, str]:
     if p is None:
         return False, "현재 서비스가 실행중이지 않습니다."
     try:
-        os.kill(p, signal.SIGHUP)
-        return True, f"guard(pid {p})에 SIGHUP 전송"
-    except OSError as e:
+        r = subprocess.run(RELOAD_CMD, capture_output=True, text=True, timeout=10)
+    except Exception as e:
         return False, f"서비스에 반영하지 못했습니다. ({e})"
+    if r.returncode != 0:
+        return False, f"서비스에 반영하지 못했습니다. ({r.stderr.strip() or 'systemctl reload 실패'})"
+    return True, f"guard(pid {p}) reload"
