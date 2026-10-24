@@ -7,9 +7,10 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=/home/raspi/sv/guard_web
 ExecStart=/home/raspi/sv/guard_web/.venv/bin/python -m app
-# 일반 계정으로 실행. guard.db는 raspi 소유(deploy.sh가 chown), guard 리로드는 sudoers(deploy/guard_web.sudoers)로 허용한
-# systemctl reload guard 만 sudo로 부른다
-User=raspi
+# 로그인 불가 전용 계정. guard.db(sv/guard/data, root:guard 2770, 660)는 그룹 guard로 쓰고,
+# guard 리로드는 sudoers(deploy/guard_web.sudoers)로 허용한 systemctl reload guard 만 sudo로 부른다
+User=guardweb
+Group=guard
 Restart=on-failure
 RestartSec=3
 

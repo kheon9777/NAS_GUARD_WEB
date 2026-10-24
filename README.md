@@ -15,9 +15,9 @@ app/
   main.py         라우트와 화면 로직
   views/          Jinja2 템플릿 (base, login, settings, whitelist, blocks, devices, account)
 deploy/
-  guard_web.service   systemd 유닛 (User=raspi)
-  guard_web.sudoers   raspi에게 systemctl reload guard 만 허용. /etc/sudoers.d/guard_web
-  config.ini          서비스용 설정 (DB 경로가 sv/guard/guard.db)
+  guard_web.service   systemd 유닛 (User=guardweb, Group=guard)
+  guard_web.sudoers   guardweb에게 systemctl reload guard 만 허용. /etc/sudoers.d/guard_web
+  config.ini          서비스용 설정 (DB 경로가 sv/guard/data/guard.db)
 config.ini        개발용 설정
 run.sh            개발 실행 (.venv/bin/python -m app)
 deploy.sh         서비스 배포
@@ -43,6 +43,8 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   # 처음 �
 서비스 배포는 `./deploy.sh` (app 복사, pip install, `guard_web` 재시작). 처음 한 번은 `./deploy.sh install`. 운영 경로는 `/home/raspi/sv/guard_web`
 
 ## 권한
-웹은 일반 계정 `raspi`로 돈다 (서비스 `User=raspi`, 개발은 그냥 `./run.sh`).
-- `guard.db` 쓰기: DB 파일을 raspi 소유로 둔다 (`deploy.sh`가 chown). guard(root)가 raspi 소유 DB를 열면 `-wal`, `-shm`도 raspi 소유로 만들어지므로 한 번이면 된다.
-- guard 리로드: `/etc/sudoers.d/guard_web`(`deploy/guard_web.sudoers`)이 raspi에게 `/usr/bin/systemctl reload guard` 하나만 비밀번호 없이 허용한다. `guardctl.reload()`가 이 명령을 부른다.
+서비스는 로그인 불가 전용 계정 `guardweb`(그룹 `guard`)으로 돈다. 개발은 그냥 `./run.sh`.
+- `guard.db` 쓰기: guard 쪽 `deploy.sh`가 `sv/guard/data/`를 root:guard 2770, DB 파일을 660으로 둔다. guardweb은 그룹 guard라 읽고 쓸 수 있고, WAL의 `-wal`, `-shm`을 새로 만들거나 지울 수도 있다. 실행 파일과 `logs/`는 root 소유 그대로.
+- guard 리로드: `/etc/sudoers.d/guard_web`(`deploy/guard_web.sudoers`)이 guardweb에게 `/usr/bin/systemctl reload guard` 하나만 비밀번호 없이 허용한다. `guardctl.reload()`가 이 명령을 부른다. 다른 sudo는 안 된다.
+- `/home/raspi`가 700이라 guardweb에게 지나가는(x) 권한만 ACL로 준다 (`setfacl -m u:guardweb:--x /home/raspi`, `deploy.sh install`).
+- 전부 `./deploy.sh install`이 만든다 (그룹, 계정, ACL, sudoers, 유닛).
