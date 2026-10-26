@@ -2,6 +2,14 @@
 
 `guard`(../NAS_GUARD) 데몬의 웹 콘솔. guard와 같은 `guard.db`를 읽고 쓰며, 설정과 화이트리스트를 바꾸면 `sudo systemctl reload guard`(ExecReload가 SIGHUP)로 바로 반영함. (FastAPI + Jinja2)
 
+## 실행화면
+<img width="2553" height="1312" alt="image" src="https://github.com/user-attachments/assets/44d9e325-3c3f-4462-86ef-ac6fdb6f3cdc" />
+
+<img width="2299" height="708" alt="image" src="https://github.com/user-attachments/assets/866716d2-15c1-44f7-ba93-ffb70f28737c" />
+
+<img width="2538" height="783" alt="image" src="https://github.com/user-attachments/assets/bc371115-4853-4e1e-b2c7-1d8a6c4d4eb4" />
+
+
 ## 구조
 
 ```
