@@ -8,7 +8,7 @@
 <img width="2299" height="708" alt="image" src="https://github.com/user-attachments/assets/866716d2-15c1-44f7-ba93-ffb70f28737c" />
 
 <img width="2538" height="783" alt="image" src="https://github.com/user-attachments/assets/bc371115-4853-4e1e-b2c7-1d8a6c4d4eb4" />
-
+공유기에 syn플로드 방지를 풀었더니 실제로 누군가가 접속시도를 했다
 
 ## 구조
 
